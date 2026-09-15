@@ -650,7 +650,7 @@ const EquipmentEncode = () => {
                 <Table size="small">
                   <TableHead>
                     <TableRow sx={{ backgroundColor: '#fafafa' }}>
-                      {['Date Released', 'Qty', 'Item/s', 'Taken By', 'Released By'].map((h) => (
+                      {['Date Released', 'Control Number', 'Qty', 'Item/s', 'Taken By', 'Released By'].map((h) => (
                         <TableCell key={h} sx={{ fontFamily: font, fontWeight: 700, fontSize: 11, color: '#888', textTransform: 'uppercase' }}>
                           {h}
                         </TableCell>
@@ -661,6 +661,7 @@ const EquipmentEncode = () => {
                     {pagedReleaseRecords.map((r) => (
                       <TableRow key={r.transaction_id} sx={{ '&:hover': { backgroundColor: '#fafafa' } }}>
                         <TableCell sx={{ fontFamily: font, fontSize: 13 }}>{formatDate(r.created_at)}</TableCell>
+                        <TableCell sx={{ fontFamily: font, fontSize: 13, fontWeight: 600 }}>{r.control_number || '—'}</TableCell>
                         <TableCell sx={{ fontFamily: font, fontSize: 13, fontWeight: 600 }}>{Math.abs(Number(r.quantity_changed) || 0)}</TableCell>
                         <TableCell sx={{ fontFamily: font, fontSize: 13, fontWeight: 600 }}>{r.asset_name}</TableCell>
                         <TableCell sx={{ fontFamily: font, fontSize: 13 }}>{r.taken_by || '—'}</TableCell>
@@ -669,7 +670,7 @@ const EquipmentEncode = () => {
                     ))}
                     {filteredReleaseRecords.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={5} align="center" sx={{ fontFamily: font, py: 4, color: '#888' }}>
+                        <TableCell colSpan={6} align="center" sx={{ fontFamily: font, py: 4, color: '#888' }}>
                           No release records match your search.
                         </TableCell>
                       </TableRow>

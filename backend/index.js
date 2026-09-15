@@ -1710,10 +1710,10 @@ app.post('/api/equipment/:id/transfer', async (req, res) => {
   }
 });
 
-// ✅ UPDATED: Handles controlNumber
+// Update the POST /api/equipment endpoint
 app.post('/api/equipment', async (req, res) => {
-  const { itemName, brand, quantity, location, specifications, controlNumber, user } = req.body;
-
+  const { itemName, brand, quantity, location, specifications, controlNumber, user } = req.body; // ADD controlNumber
+  
   const qty = parseInt(quantity);
   if (!itemName || !itemName.trim()) {
     return res.status(400).json({ message: 'Item name is required.' });
@@ -1721,7 +1721,7 @@ app.post('/api/equipment', async (req, res) => {
   if (!specifications || !specifications.trim() || specifications.trim().toUpperCase() === 'N/A') {
     return res.status(400).json({ message: 'Specifications are required.' });
   }
-  if (!controlNumber || !controlNumber.trim()) {
+  if (!controlNumber || !controlNumber.trim()) { // ADD validation
     return res.status(400).json({ message: 'Control number is required.' });
   }
   if (Number.isNaN(qty) || qty < 1) {
@@ -1739,7 +1739,7 @@ app.post('/api/equipment', async (req, res) => {
       await upsertBrand(pool, normBrand);
     }
 
-    // CHECK FOR DUPLICATE CONTROL NUMBER
+    // Check for duplicate control number
     const existingControlNumber = await pool.request()
       .input('ControlNumber', sql.NVarChar, controlNumber.trim())
       .query('SELECT Id FROM LibraryEquipment WHERE ControlNumber = @ControlNumber');
@@ -1786,6 +1786,7 @@ app.post('/api/equipment', async (req, res) => {
       return res.json({ success: true, id: match.Id, message: 'Stock updated on existing asset.' });
     }
 
+    // INSERT with ControlNumber
     const insertResult = await pool.request()
       .input('ItemName', sql.NVarChar, normItemName)
       .input('Brand', sql.NVarChar, normBrand)
@@ -1794,7 +1795,7 @@ app.post('/api/equipment', async (req, res) => {
       .input('Condition', sql.NVarChar, '')
       .input('Location', sql.NVarChar, location || '')
       .input('Specifications', sql.NVarChar, normSpecs)
-      .input('ControlNumber', sql.NVarChar, controlNumber.trim())
+      .input('ControlNumber', sql.NVarChar, controlNumber.trim()) // ADD THIS
       .query(`INSERT INTO LibraryEquipment 
         (ItemName, Brand, Quantity, Status, Condition, Location, Specifications, ControlNumber)
         OUTPUT INSERTED.Id
@@ -1818,6 +1819,7 @@ app.post('/api/equipment', async (req, res) => {
     res.status(500).json({ error: 'Failed to add equipment' });
   }
 });
+
 
 // ✅ UPDATED: Handles controlNumber
 app.put('/api/equipment/:id', async (req, res) => {
